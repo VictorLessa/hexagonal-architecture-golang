@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
-	"victorLessa/server/application/repositories"
-	"victorLessa/server/application/usecases"
+
+	"victorLessa/server/framework/cmd/routes"
 	"victorLessa/server/framework/database"
-	"victorLessa/server/framework/server"
 
 	mux "github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -38,12 +37,11 @@ func (a * App) initializeRoutes() {
 		w.Write(response)
 
 	}).Methods("GET")
+	
+	userRoute := routes.UserRoute{Router: a.Router, Db: a.Db }
 
-	userRepository := repositories.UserRepositoryDb{Db:  a.Db}
-	userUsecases := usecases.UserUseCase{UserRepository: userRepository}	
-	userServer := server.UserServer{UserUseCase: userUsecases}
+	userRoute.UserRoutes()
 
-	a.Router.HandleFunc("/users", userServer.CreateUser).Methods("POST")
 }
 
 func (a *App) Run() {

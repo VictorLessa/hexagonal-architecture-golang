@@ -9,6 +9,8 @@ import (
 
 type UserRepository interface {
 	Insert()
+	Index()
+	Update()
 }
 
 type UserRepositoryDb struct {
@@ -22,4 +24,47 @@ func (repo *UserRepositoryDb) Insert(payload *domain.User) (*domain.User, error)
 		return nil, err
 	}
 	return payload, nil
+}
+
+func (repo *UserRepositoryDb) Index() (*gorm.DB) {
+	var users []domain.User
+	
+	result := repo.Db.Find(&users)
+	
+	return result
+}
+
+func (repo *UserRepositoryDb) Show(id string) (*gorm.DB) {
+	var users []domain.User
+	
+	var result = repo.Db.Find(&users, "id = ?", id)
+
+	
+	return result
+}
+
+func(repo *UserRepositoryDb) Update(id string, user *domain.User) (*domain.User, error)  {
+		var users []domain.User
+		res:= repo.Db.First(&users, "id = ?", id)
+		
+		err := res.Save(user).Error
+		
+		if err != nil {
+			return nil, err
+		}
+		
+		return user, nil
+	}
+	
+func (repo *UserRepositoryDb) Delete(id string) (*gorm.DB, error) {
+
+	res:= repo.Db.First(&domain.User{}, "id = ?", id)
+	
+	err := repo.Db.Delete(&domain.User{}, "id = ? ", id).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
