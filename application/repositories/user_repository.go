@@ -17,13 +17,13 @@ type UserRepositoryDb struct {
 	Db *gorm.DB
 }
 
-func (repo *UserRepositoryDb) Insert(payload *domain.User) (*domain.User, error) {
-	err := repo.Db.Create(payload).Error
+func (repo *UserRepositoryDb) Insert(paylod *domain.User) (*domain.User, error) {
+	err := repo.Db.Create(paylod).Error
 
 	if err != nil {
 		return nil, err
 	}
-	return payload, nil
+	return paylod, nil
 }
 
 func (repo *UserRepositoryDb) Index() (*gorm.DB) {
@@ -67,4 +67,12 @@ func (repo *UserRepositoryDb) Delete(id string) (*gorm.DB, error) {
 	}
 
 	return res, nil
+}
+
+func (repo *UserRepositoryDb) FindByName(username string) *domain.User {
+	var users = &domain.User{}
+	
+	repo.Db.Find(&users, "username = ?", username).Scan(&users)
+
+	return users
 }

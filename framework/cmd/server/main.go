@@ -39,16 +39,16 @@ func (a * App) initializeRoutes() {
 	}).Methods("GET")
 	
 	userRoute := routes.UserRoute{Router: a.Router, Db: a.Db }
+	authenticateRoute := routes.AuthenticateRoute{Router: a.Router, Db: a.Db }
 
 	userRoute.UserRoutes()
+	authenticateRoute.AuthenticateRoutes()
 
 }
 
 func (a *App) Run() {
 	http.ListenAndServe(":8010", a.Router)
-
 }
-
 
 func main() {
 	a := App{}

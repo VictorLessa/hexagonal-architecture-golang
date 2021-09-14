@@ -15,7 +15,6 @@ type UserServer struct {
 	UserUseCase usecases.UserUseCase
 }
 
-
 func NewUserServer() *UserServer {
 	return &UserServer{}
 }
