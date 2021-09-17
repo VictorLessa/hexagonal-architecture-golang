@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"net/http"
 	"victorLessa/server/application/middleware"
 	"victorLessa/server/application/repositories"
 	"victorLessa/server/application/usecases"
@@ -16,6 +17,8 @@ type UserRoute struct {
 	Db *gorm.DB
 }
 
+
+
 func (UserRoute *UserRoute) UserRoutes() {
 
 	userRepository := repositories.UserRepositoryDb{Db:  UserRoute.Db}
@@ -23,12 +26,10 @@ func (UserRoute *UserRoute) UserRoutes() {
 	userServer := server.UserServer{UserUseCase: userUsecases}
 
 	userRoute := UserRoute.Router 
-	userRoute.HandleFunc("/users", userServer.CreateUser).Methods("POST")
-	userRoute.HandleFunc("/users", userServer.IndexUsers).Methods("GET")
-	userRoute.HandleFunc("/users/{id}", userServer.ShowUsers).Methods("GET")
-	userRoute.HandleFunc("/users/{id}", userServer.UpdateUser).Methods("PUT")
-	userRoute.HandleFunc("/users/{id}", userServer.UpdateUser).Methods("PUT")
-	userRoute.HandleFunc("/users/{id}", userServer.DeleteUser).Methods("DELETE")
+	userRoute.HandleFunc("/users", middleware.Adapt(http.HandlerFunc(userServer.CreateUser), middleware.AuthMiddleware).ServeHTTP).Methods("POST")
+	userRoute.HandleFunc("/users", middleware.Adapt(http.HandlerFunc(userServer.IndexUsers), middleware.AuthMiddleware).ServeHTTP).Methods("GET")
+	userRoute.HandleFunc("/users/{id}", middleware.Adapt(http.HandlerFunc(userServer.ShowUsers), middleware.AuthMiddleware).ServeHTTP).Methods("GET")
+	userRoute.HandleFunc("/users/{id}", middleware.Adapt(http.HandlerFunc(userServer.UpdateUser), middleware.AuthMiddleware).ServeHTTP).Methods("PUT")
+	userRoute.HandleFunc("/users/{id}", middleware.Adapt(http.HandlerFunc(userServer.DeleteUser), middleware.AuthMiddleware).ServeHTTP).Methods("DELETE")
 
-	userRoute.Use(middleware.AuthMiddleware)
 }

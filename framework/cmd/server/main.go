@@ -24,6 +24,7 @@ func (a *App) Initialize() {
 	
 	a.Router = mux.NewRouter()
 	
+	a.Router.Use(mux.CORSMethodMiddleware(a.Router))
 	a.initializeRoutes()
 }
 
@@ -41,8 +42,8 @@ func (a * App) initializeRoutes() {
 	userRoute := routes.UserRoute{Router: a.Router, Db: a.Db }
 	authenticateRoute := routes.AuthenticateRoute{Router: a.Router, Db: a.Db }
 
-	userRoute.UserRoutes()
 	authenticateRoute.AuthenticateRoutes()
+	userRoute.UserRoutes()
 
 }
 
